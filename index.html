@@ -59,12 +59,93 @@
   <script>
     const cidBase=[['F84.0','Autismo infantil'],['F84.1','Autismo atipico'],['F84.5','Sindrome de Asperger'],['F81.0','Transtorno especifico de leitura'],['F81.1','Transtorno especifico da soletracao'],['F81.2','Transtorno especifico da habilidade em aritmetica'],['F90.0','Transtorno da atividade e da atencao'],['F70','Deficiencia intelectual leve'],['F71','Deficiencia intelectual moderada'],['H54','Cegueira e visao subnormal'],['H90','Perda de audicao por transtorno de conducao e/ou neurossensorial'],['G80','Paralisia cerebral'],['E34','Outros transtornos endocrinos'],['E40','Kwashiorkor'],['E41','Marasmo nutricional'],['E42','Kwashiorkor marasmatico'],['E43','Desnutricao proteico-calorica grave'],['E44','Desnutricao proteico-calorica moderada e leve']].map(([code,description])=>({code,description,active:true}));
     const standardProfiles=[{id:'admin',name:'Administrador'},{id:'semed',name:'SEMED'},{id:'diretoria-semed',name:'Diretoria SEMED'},{id:'crei',name:'CREI'},{id:'unidade',name:'Unidade de Ensino'},{id:'assessoria',name:'Assessoria'}];
+    const standardUnitNames=`E.M. ADOLFO BEZERRA DE MENEZES
+E.M. ARTHUR DE MELLO TEIXEIRA
+E.M. BOA VISTA
+E.M. CELINA SOARES DE PAIVA
+E.M. DOUTOR ALUÍZIO ROSA PRATA
+E.M. FREDERICO PEIRÓ
+E.M. GASTÃO MESQUITA FILHO
+E.M. JOÃOZINHO E MARIA
+E.M. JOSÉ MARCUS CHERÉM
+E.M. JOUBERT DE CARVALHO
+E.M. MADRE MARIA GEORGINA
+E.M. MARIA CAROLINA MENDES
+E.M. MARIA LOURENCINA PALMÉRIO
+E.M. MONTEIRO LOBATO
+E.M. NORMA SUELI BORGES
+E.M. PADRE EDDIE BERNARDES
+E.M. PEQUENO PRÍNCIPE
+E.M. PROFESSOR ANÍSIO TEIXEIRA
+E.M. PROFESSOR JOSÉ GERALDO GUIMARÃES
+E.M. PROFESSOR JOSÉ MACCIOTTI
+E.M. PROFESSOR PAULO RODRIGUES
+E.M. PROFESSORA ESTHER LIMÍRIO BRIGAGÃO
+E.M. PROFESSORA GENI CHAVES
+E.M. PROFESSORA JANE LUCE ARAÚJO
+E.M. PROFESSORA LUCIENE APARECIDA DO CARMO
+E.M. PROFESSORA NIZA MARQUEZ GUARITÁ
+E.M. PROFESSORA OLGA DE OLIVEIRA
+E.M. PROFESSORA STELLA CHAVES
+E.M. PROFESSORA TEREZINHA HUEB DE MENEZES
+E.M. REIS JÚNIOR
+E.M. RICARDO MISSON
+E.M. SANTA MARIA
+E.M. SÃO JUDAS TADEU
+E.M. SEBASTIÃO ANTÔNIO LEAL
+E.M. SÍTIO DO PICA-PAU AMARELO
+E.M. TOTONHO DE MORAIS
+E.M. UBERABA
+E.M. URBANA FREI EUGÊNIO
+E.M. VICENTE ALVES TRINDADE
+CEMEI ANGELA BEATRIZ BONÁDIO ALVES
+CEMEI APARECIDA CONCEIÇÃO FERREIRA
+CEMEI CLÁUDIA APARECIDA VILELA MESQUITA
+CEMEI DIEGO JOSÉ FERREIRA LIMA
+CEMEI FRANCISCA WALIAS WENCESLAU
+CEMEI GERVÁSIO PEDRO ALVES
+CEMEI INTEGRAÇÃO
+CEMEI JOÃO MIGUEL HUEB
+CEMEI JUSCELINO KUBITSCHECK
+CEMEI LUCIANO PORTELINHA MOTA
+CEMEI MÁRCIO EURÍPDES MARTINS DOS SANTOS
+CEMEI MARIA DE ASSIS REZENDE
+CEMEI MARIA DE LOURDES VASQUES MARTINS MARINO
+CEMEI MARIA DE NAZARÉ
+CEMEI MARIA EDUARDA FARNEZI CAETANO
+CEMEI MARIA ELISABETE SALGE MELO
+CEMEI MARIA ROSA DE OLIVEIRA
+CEMEI MICHELLE FLÁVIA MARTINS PIRES
+CEMEI Mônica Machiyama
+CEMEI MONSENHOR JUVENAL ARDUINI
+CEMEI NICANOR PEDRO DA SILVA
+CEMEI NOSSA SENHORA DE LOURDES
+CEMEI OCTÁVIA ALVES LOPES
+CEMEI PARAÍSO
+CEMEI PROFESSOR JOÃO WILSON DE FREITAS
+CEMEI PROFESSOR RAIMUNDO EDMUNDO DE FREITAS
+CEMEI PROFESSORA BEATRIZ FAUSTINO MONTEIRO
+CEMEI PROFESSORA DIRCE MIZIARA
+CEMEI PROFESSORA EUNICE DE SOUSA PUHLER
+CEMEI PROFESSORA JOANA DARC CAMPOS OLIVEIRA
+CEMEI PROFESSORA MARIA EMERENCIANA CARDOSO
+CEMEI PROFESSORA MARÍLIA BARBOSA PACHECO SILVA
+CEMEI PROFESSORA NATALYA DAYRELL DE CARVALHO
+CEMEI PROFESSORA ZITA THEREZINHA CAPUÇO
+CEMEI SOLANGE APARECIDA CARDOSO DA SILVA
+CEMEI TUTUNAS
+CEMEI VOVÓ ADELINA
+CEMEI VOVÓ TIANA`.split('\n').map(name=>name.trim()).filter(Boolean);
+    const unitIdFromName=name=>'unit-'+name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const standardUnits=standardUnitNames.map(name=>({id:unitIdFromName(name),name,type:name.startsWith('CEMEI')?'CEMEI':'Escola Municipal',city:'Uberaba',active:true}));
     function normalizeProfiles(data){const current=data?.profiles||[],byId=Object.fromEntries(current.map(p=>[p.id,p]));data.profiles=standardProfiles.map(p=>({...p,...byId[p.id],id:p.id}));data.access=data.access||{};data.profiles.forEach(p=>data.access[p.id]=data.access[p.id]||{fields:{studentFields:p.id!=='admin'?true:undefined}});return data}
-    const initialData=normalizeProfiles({users:[{id:'u-admin',name:'Admin Sistema',email:'admin@semed.local',password:'Admin@123',profileId:'admin',unitId:'admin',active:true}],profiles:standardProfiles,units:[{id:'admin',name:'Administracao SEMED',type:'Administracao',city:'Uberaba',active:true}],students:[],teachers:[],assignments:[],requests:[],pei:[],access:{admin:{fields:{studentFields:true,medicalFields:true,requests:true,supportTeachers:true,assignments:true,pei:true,reports:true,users:true,units:true}},unidade:{fields:{studentFields:true}}},cid10:cidBase});
-    const Store={data:JSON.parse(JSON.stringify(initialData)),payload(){return JSON.parse(JSON.stringify(normalizeProfiles(this.data)))},merge(r){if(r&&typeof r==='object')this.data=normalizeProfiles({...initialData,...r,requests:r.requests||[],pei:r.pei||[],cid10:r.cid10?.length?r.cid10:cidBase})},async load(){const b=await window.CREI_FIREBASE_READY;if(!b?.enabled)throw new Error('Firebase indisponivel.');const r=await b.load();if(r){this.merge(r)}else{await b.save(this.payload())}q('syncStatus').textContent='Firebase: conectado'},async save(){const b=await window.CREI_FIREBASE_READY;if(!b?.enabled)throw new Error('Firebase indisponivel.');await b.save(this.payload());q('syncStatus').textContent='Firebase: salvo '+new Date().toLocaleTimeString('pt-BR')}};
+    function normalizeUnits(data){const current=data?.units||[],byId=Object.fromEntries(current.map(u=>[u.id,u])),admin=byId.admin||{id:'admin',name:'Administracao SEMED',type:'Administracao',city:'Uberaba',active:true};data.units=[admin,...standardUnits.map(u=>({...u,...byId[u.id],id:u.id,name:u.name,type:u.type,city:u.city,active:true}))];return data}
+    function normalizeData(data){return normalizeUnits(normalizeProfiles(data))}
+    const initialData=normalizeData({users:[{id:'u-admin',name:'Admin Sistema',email:'admin@semed.local',password:'Admin@123',profileId:'admin',unitId:'admin',active:true}],profiles:standardProfiles,units:[{id:'admin',name:'Administracao SEMED',type:'Administracao',city:'Uberaba',active:true},...standardUnits],students:[],teachers:[],assignments:[],requests:[],pei:[],access:{admin:{fields:{studentFields:true,medicalFields:true,requests:true,supportTeachers:true,assignments:true,pei:true,reports:true,users:true,units:true}},unidade:{fields:{studentFields:true}}},cid10:cidBase});
+    const Store={data:JSON.parse(JSON.stringify(initialData)),payload(){return JSON.parse(JSON.stringify(normalizeData(this.data)))},merge(r){if(r&&typeof r==='object')this.data=normalizeData({...initialData,...r,requests:r.requests||[],pei:r.pei||[],cid10:r.cid10?.length?r.cid10:cidBase})},async load(){const b=await window.CREI_FIREBASE_READY;if(!b?.enabled)throw new Error('Firebase indisponivel.');const r=await b.load();if(r){this.merge(r)}else{await b.save(this.payload())}q('syncStatus').textContent='Firebase: conectado'},async save(){const b=await window.CREI_FIREBASE_READY;if(!b?.enabled)throw new Error('Firebase indisponivel.');await b.save(this.payload());q('syncStatus').textContent='Firebase: salvo '+new Date().toLocaleTimeString('pt-BR')}};
     let currentUser=null,currentTab='dados',editingStudent=null,editingCrud={};
     const menu=[['students','Alunos',renderStudents],['requests','Solicitacoes',renderRequests,'Professor de Apoio'],['supportTeachers','Cadastro do Professor',renderTeachers,'Professor de Apoio'],['assignments','Vincular Professor',renderAssignments,'Professor de Apoio'],['pei','PEI',renderPei],['reports','Relatorio Gerencial',renderReports],['users','Usuarios',renderUsers,'Cadastros Operacionais'],['access','Painel de acesso',renderAccess,'Cadastros Operacionais'],['units','Cadastro de unidades',renderUnits,'Cadastros Operacionais']];
-    const q=id=>document.getElementById(id),uid=p=>`${p}-${Date.now()}-${Math.random().toString(16).slice(2)}`,unitName=id=>Store.data.units.find(u=>u.id===id)?.name||'',studentName=id=>Store.data.students.find(s=>s.id===id)?.name||'',teacherName=id=>Store.data.teachers.find(t=>t.id===id)?.name||'',visibleStudents=()=>currentUser?.profileId==='unidade'?Store.data.students.filter(s=>s.unitId===currentUser.unitId):Store.data.students;
+    const q=id=>document.getElementById(id),uid=p=>`${p}-${Date.now()}-${Math.random().toString(16).slice(2)}`,educationUnits=()=>Store.data.units.filter(u=>u.active&&u.type!=='Administracao'),unitName=id=>Store.data.units.find(u=>u.id===id)?.name||'',studentName=id=>Store.data.students.find(s=>s.id===id)?.name||'',teacherName=id=>Store.data.teachers.find(t=>t.id===id)?.name||'',visibleStudents=()=>currentUser?.profileId==='unidade'?Store.data.students.filter(s=>s.unitId===currentUser.unitId):Store.data.students;
     function view(h){q('view').innerHTML=h}function setTitle(t){q('pageTitle').textContent=t}function selectMenu(k){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.key===k))}function showAlert(id,m){q(id).textContent=m;q(id).classList.add('show')}function clearAlert(id){q(id).classList.remove('show')}
     function buildMenu(){let h='',g='';menu.forEach(([k,l,fn,grp])=>{if(grp&&grp!==g){g=grp;h+=`<div class="nav-title">${grp}</div>`}if(!grp)g='';h+=`<button data-key="${k}" onclick="openView('${k}')">${l}</button>`});q('menu').innerHTML=h}
     function openView(k){const item=menu.find(m=>m[0]===k);if(!item)return;selectMenu(k);setTitle(item[1]);q('view').dataset.current=k;item[2]()}function renderCurrent(){const k=q('view').dataset.current||'home';k==='home'?showHome():openView(k)}function showHome(){selectMenu('');q('view').dataset.current='home';setTitle('Visao Inicial');view(`<section class="hero"><div class="hero-card"><h1>SEMED CREI</h1><p class="muted">Selecione uma opcao no menu principal para iniciar.</p></div></section>`)}function logout(){currentUser=null;q('appScreen').style.display='none';q('loginScreen').style.display='grid'}
@@ -79,7 +160,7 @@
     function yesNoField(id,l,v='',col='col-3',extra=''){return selectInput(id,l,['Sim','Não'],v,col,extra)}
     function fileInput(id,l,current='',col='col-4',extra=''){return `<div class="form-group ${col}"><label>${l}</label><input id="${id}" type="file" class="form-control" ${extra}><small>${current||''}</small></div>`}
     function renderStudentForm(){const s=editingStudent,inc=s.inclusion||{},tabs=['dados','deficiencia','alimentacao','comunicacao','higiene','motora','social','visual','auditivo','cognitivo','computo'],labels={dados:'Dados do aluno',deficiencia:'Deficiência e/ou Transtornos',alimentacao:'Alimentação',comunicacao:'Comunicação',higiene:'Higiene',motora:'Função Motora',social:'Função Social',visual:'Aspectos Visuais',auditivo:'Aspectos Auditivos',cognitivo:'Aspectos Cognitivos',computo:'Cômputo'};view(`<div class="panel"><div class="panel-head"><h3>${s.id?'Editar':'Novo'} Aluno</h3><button class="btn btn-secondary" onclick="renderStudents()">Fechar</button></div><div class="panel-body"><div class="tabs">${tabs.map(t=>`<button class="tab ${currentTab===t?'active':''}" onclick="currentTab='${t}';renderStudentForm()">${labels[t]}</button>`).join('')}</div><form onsubmit="saveStudent(event)"><div class="grid">${studentTabHtml(s,inc)}</div><div class="toolbar" style="margin-top:18px"><button class="btn btn-secondary" type="button" onclick="renderStudents()">Cancelar</button><button class="btn btn-primary">Salvar</button></div></form></div></div>`);toggleStudentRules()}
-    function studentTabHtml(s,inc){if(currentTab==='dados')return `<div class="section-title">Dados do aluno</div><div class="form-group col-4"><label>Unidade de Ensino *</label><select id="unitId" class="form-control" ${currentUser.profileId==='unidade'?'disabled':''}>${opts(Store.data.units.filter(u=>u.active),s.unitId||currentUser.unitId)}</select></div><div class="form-group col-4"><label>Nome do Aluno *</label><input id="name" class="form-control" value="${s.name||''}" required></div><div class="form-group col-2"><label>Matricula</label><input id="enrollment" class="form-control" value="${s.enrollment||''}"></div><div class="form-group col-1"><label>Serie</label><input id="grade" class="form-control" value="${s.grade||''}"></div><div class="form-group col-1"><label>Turma</label><input id="classGroup" class="form-control" value="${s.classGroup||''}"></div><div class="form-group col-3"><label>Data de Nascimento</label><input id="birthDate" type="date" class="form-control" value="${s.birthDate||''}"></div><div class="form-group col-6"><label>Nome do(a) Professor(a) da classe regular</label><input id="regularTeacher" class="form-control" value="${s.regularTeacher||''}"></div><div class="form-group col-3"><label>Frequenta AEE?</label>${yesNo('attendsAee',s.attendsAee)}</div>`;
+    function studentTabHtml(s,inc){if(currentTab==='dados')return `<div class="section-title">Dados do aluno</div><div class="form-group col-4"><label>Unidade de Ensino *</label><select id="unitId" class="form-control" ${currentUser.profileId==='unidade'?'disabled':''}>${opts(educationUnits(),s.unitId||currentUser.unitId)}</select></div><div class="form-group col-4"><label>Nome do Aluno *</label><input id="name" class="form-control" value="${s.name||''}" required></div><div class="form-group col-2"><label>Matricula</label><input id="enrollment" class="form-control" value="${s.enrollment||''}"></div><div class="form-group col-1"><label>Serie</label><input id="grade" class="form-control" value="${s.grade||''}"></div><div class="form-group col-1"><label>Turma</label><input id="classGroup" class="form-control" value="${s.classGroup||''}"></div><div class="form-group col-3"><label>Data de Nascimento</label><input id="birthDate" type="date" class="form-control" value="${s.birthDate||''}"></div><div class="form-group col-6"><label>Nome do(a) Professor(a) da classe regular</label><input id="regularTeacher" class="form-control" value="${s.regularTeacher||''}"></div><div class="form-group col-3"><label>Frequenta AEE?</label>${yesNo('attendsAee',s.attendsAee)}</div>`;
       if(currentTab==='deficiencia')return `<div class="section-title">Deficiência e/ou Transtornos</div>${selectInput('disabilityType','Deficiência e/ou Transtornos',['Deficiencia Auditiva - Perda Auditiva','Deficiencia Auditiva - Surdez','Deficiencia Visual - Baixa Visao','Deficiencia Visual - Cegueira','Deficiencia Fisica','Deficiencia Intelectual','Deficiencia Multipla','Transtorno do Espectro Autista - TEA','Outro'],inc.disabilityType,'col-6')}${yesNoField('hasReport','Laudo Medico?',s.hasReport,'col-3','onchange="toggleStudentRules()"')}${fileInput('reportFile','Anexar Laudo',s.reportFileName,'col-3','accept="application/pdf"')}${yesNoField('otherConditionReport','Laudo medico atesta outro transtorno/condicao/comorbidade?',inc.otherConditionReport,'col-6')}${yesNoField('familyInterview','AEE realizou entrevista com a familia?',inc.familyInterview,'col-3','onchange="toggleStudentRules()"')}${fileInput('interviewFile','Anexar entrevista',inc.interviewFileName,'col-3')}`;
       if(currentTab==='alimentacao')return `<div class="section-title">Alimentação</div>${yesNoField('foodAutonomy','Tem autonomia para se alimentar?',inc.foodAutonomy)}${yesNoField('foodNeedsHelp','Necessita de auxilio para se alimentar?',inc.foodNeedsHelp)}${yesNoField('tubeFeeding','Alimentacao por sonda?',inc.tubeFeeding)}${yesNoField('foodSelectivity','Seletividade alimentar?',inc.foodSelectivity,'col-3','onchange="toggleStudentRules()"')}${fieldInput('foodSelectivityText','Qual seletividade?',inc.foodSelectivityText,'col-6')}`;
       if(currentTab==='comunicacao')return `<div class="section-title">Comunicação</div>${selectInput('verbalLanguage','Expressa por meio de linguagem verbal?',['Balbucia','Palavras','Frases','Mantem dialogo','Nao verbal'],inc.verbalLanguage,'col-4')}${yesNoField('alternativeCommunication','Usa de comunicacao alternativa e suplementar?',inc.alternativeCommunication)}${yesNoField('pointingCommunication','Se expressa por apontamento?',inc.pointingCommunication)}${yesNoField('simpleCommands','Responde comandos simples?',inc.simpleCommands)}${yesNoField('understandableCommunication','Se comunica de forma compreensivel?',inc.understandableCommunication)}${yesNoField('linguisticSupport','Necessita de apoio/suporte linguistico?',inc.linguisticSupport)}`;
@@ -95,8 +176,8 @@
     function showCid(id){const input=q(id),out=q(id+'Text');if(!input||!out)return;const c=Store.data.cid10.find(x=>x.code.toUpperCase()===input.value.trim().toUpperCase());out.textContent=c?`${c.code} - ${c.description}`:(input.value?'CID10 nao localizado.':'Digite o codigo para localizar o CID10.')}
     async function saveStudent(e){e.preventDefault();const val=(f,d='')=>q(f)?.value??d,id=editingStudent.id||uid('stu'),unitId=currentUser.profileId==='unidade'?currentUser.unitId:val('unitId',editingStudent.unitId||currentUser.unitId),inc=editingStudent.inclusion||{};document.querySelectorAll('.inc-field').forEach(el=>inc[el.dataset.k]=el.value);if(q('interviewFile')?.files?.[0])inc.interviewFileName=q('interviewFile').files[0].name;const s={id,unitId,name:val('name',editingStudent.name||''),enrollment:val('enrollment',editingStudent.enrollment||''),grade:val('grade',editingStudent.grade||''),classGroup:val('classGroup',editingStudent.classGroup||''),birthDate:val('birthDate',editingStudent.birthDate||''),regularTeacher:val('regularTeacher',editingStudent.regularTeacher||''),attendsAee:val('attendsAee',editingStudent.attendsAee||''),hasReport:val('hasReport',editingStudent.hasReport||''),reportFileName:q('reportFile')?.files?.[0]?.name||editingStudent.reportFileName||'',inclusion:inc};const i=Store.data.students.findIndex(x=>x.id===id);i>=0?Store.data.students[i]=s:Store.data.students.push(s);await Store.save().catch(e=>alert(e.message));renderStudents()}
     async function deleteStudent(id){if(confirm('Excluir aluno?')){Store.data.students=Store.data.students.filter(s=>s.id!==id);await Store.save().catch(e=>alert(e.message));renderStudents()}}
-    function fieldHtml(f,l,item={}){const value=item[f]||'';if(f==='unitId')return `<div class="form-group col-4"><label>${l}</label><select class="form-control" id="${f}">${opts(Store.data.units.filter(u=>u.active),value)}</select></div>`;if(f==='profileId')return `<div class="form-group col-4"><label>${l}</label><select class="form-control" id="${f}">${opts(Store.data.profiles,value)}</select></div>`;return `<div class="form-group col-4"><label>${l}</label><input class="form-control" id="${f}" value="${value}" ${f==='password'?'type="password"':''} required></div>`}
-    function crud(title,key,fields,labels){const editId=editingCrud[key]||'',item=(Store.data[key]||[]).find(x=>x.id===editId)||{};view(`<div class="panel"><div class="panel-head"><h3>${editId?'Editar':'Novo'} ${title}</h3>${editId?'<button class="btn btn-secondary" onclick="clearCrudEdit()">Cancelar edicao</button>':''}</div><div class="panel-body"><form class="grid" onsubmit="saveCrud(event,'${key}')">${fields.map((f,i)=>fieldHtml(f,labels[i],item)).join('')}<div class="col-12"><button class="btn btn-primary">${editId?'Atualizar':'Salvar'}</button></div></form><hr>${tableCrud(key,fields,labels)}</div></div>`)}
+    function fieldHtml(f,l,item={},key=''){const value=item[f]||'';if(f==='unitId'){const list=key==='users'?Store.data.units.filter(u=>u.active):educationUnits();return `<div class="form-group col-4"><label>${l}</label><select class="form-control" id="${f}">${opts(list,value)}</select></div>`}if(f==='profileId')return `<div class="form-group col-4"><label>${l}</label><select class="form-control" id="${f}">${opts(Store.data.profiles,value)}</select></div>`;return `<div class="form-group col-4"><label>${l}</label><input class="form-control" id="${f}" value="${value}" ${f==='password'?'type="password"':''} required></div>`}
+    function crud(title,key,fields,labels){const editId=editingCrud[key]||'',item=(Store.data[key]||[]).find(x=>x.id===editId)||{};view(`<div class="panel"><div class="panel-head"><h3>${editId?'Editar':'Novo'} ${title}</h3>${editId?'<button class="btn btn-secondary" onclick="clearCrudEdit()">Cancelar edicao</button>':''}</div><div class="panel-body"><form class="grid" onsubmit="saveCrud(event,'${key}')">${fields.map((f,i)=>fieldHtml(f,labels[i],item,key)).join('')}<div class="col-12"><button class="btn btn-primary">${editId?'Atualizar':'Salvar'}</button></div></form><hr>${tableCrud(key,fields,labels)}</div></div>`)}
     function tableCrud(key,fields,labels){const value=(x,f)=>f==='unitId'?unitName(x[f]):f==='profileId'?(Store.data.profiles.find(p=>p.id===x[f])?.name||x[f]||''):x[f]||'';const rows=(Store.data[key]||[]).map(x=>`<tr>${fields.map(f=>`<td>${value(x,f)}</td>`).join('')}<td class="actions"><button class="btn btn-secondary" onclick="editCrud('${key}','${x.id}')">Editar</button><button class="btn btn-danger" onclick="deleteCrud('${key}','${x.id}')">Excluir</button></td></tr>`).join('');return `<table><thead><tr>${labels.map(l=>`<th>${l}</th>`).join('')}<th>Acoes</th></tr></thead><tbody>${rows||`<tr><td colspan="${labels.length+1}" class="muted">Nenhum registro.</td></tr>`}</tbody></table>`}
     function editCrud(key,id){editingCrud[key]=id;renderCurrent()}function clearCrudEdit(){editingCrud={};renderCurrent()}
     async function saveCrud(e,key){e.preventDefault();const editId=editingCrud[key]||'',item={id:editId||uid(key),active:true};e.target.querySelectorAll('[id]').forEach(el=>item[el.id]=el.value);const i=Store.data[key].findIndex(x=>x.id===item.id);if(i>=0)Store.data[key][i]={...Store.data[key][i],...item};else Store.data[key].push(item);editingCrud[key]='';await Store.save().catch(err=>alert(err.message));renderCurrent()}async function deleteCrud(key,id){Store.data[key]=Store.data[key].filter(x=>x.id!==id);if(editingCrud[key]===id)editingCrud[key]='';await Store.save().catch(err=>alert(err.message));renderCurrent()}
