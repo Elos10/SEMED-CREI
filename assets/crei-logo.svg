@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 260" role="img" aria-label="SEMED Inclusao">
+  <rect width="340" height="260" rx="24" fill="#fff"/>
+  <path d="M160 30c-19 52-54 82-102 91 22 5 38 2 53-6l-3 50c18-12 38-18 61-14 12-52 7-89-9-121z" fill="#6ee000"/>
+  <circle cx="88" cy="64" r="20" fill="#6ee000"/>
+  <path d="M180 30c19 52 54 82 102 91-22 5-38 2-53-6l3 50c-18-12-38-18-61-14-12-52-7-89 9-121z" fill="#100b82"/>
+  <circle cx="252" cy="64" r="20" fill="#100b82"/>
+  <text x="170" y="196" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="800" fill="#100b82">SEMED</text>
+  <text x="170" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#100b82">Sistema de</text>
+  <text x="170" y="247" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" fill="#6ee000">EDUCACAO INCLUSIVA</text>
+</svg>
