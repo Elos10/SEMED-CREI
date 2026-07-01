@@ -1,6 +1,10 @@
 insert into profiles (id, name) values
   ('admin', 'Administrador'),
-  ('unidade', 'Unidade de Ensino')
+  ('semed', 'SEMED'),
+  ('diretoria-semed', 'Diretoria SEMED'),
+  ('crei', 'CREI'),
+  ('unidade', 'Unidade de Ensino'),
+  ('assessoria', 'Assessoria')
 on conflict (id) do update set name = excluded.name;
 
 insert into units (id, name, type, city, active) values
@@ -47,8 +51,12 @@ on conflict (code) do update set
   active = excluded.active;
 
 insert into access_settings (profile_id, settings) values
-  ('admin', '{"fields":{"studentFields":true}}'::jsonb),
-  ('unidade', '{"fields":{"studentFields":true}}'::jsonb)
+  ('admin', '{"fields":{"studentFields":true,"medicalFields":true,"requests":true,"supportTeachers":true,"assignments":true,"pei":true,"reports":true,"users":true,"units":true}}'::jsonb),
+  ('semed', '{"fields":{"studentFields":true}}'::jsonb),
+  ('diretoria-semed', '{"fields":{"studentFields":true}}'::jsonb),
+  ('crei', '{"fields":{"studentFields":true}}'::jsonb),
+  ('unidade', '{"fields":{"studentFields":true}}'::jsonb),
+  ('assessoria', '{"fields":{"studentFields":true}}'::jsonb)
 on conflict (profile_id) do update set
   settings = excluded.settings,
   updated_at = now();
