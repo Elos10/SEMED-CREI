@@ -2,7 +2,7 @@
 
 ## Firebase
 
-1. No Firebase Console, abra o projeto `crei-5d162`.
+1. No Firebase Console, abra o projeto `crei-ff3b9`.
 2. Ative Authentication > Sign-in method > Anonymous.
 3. Ative Firestore Database.
 4. Publique as regras iniciais de `firestore.rules` ou crie regras adequadas para producao antes de usar dados reais.
