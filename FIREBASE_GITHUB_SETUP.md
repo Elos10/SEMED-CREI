@@ -6,6 +6,7 @@
 2. Ative Authentication > Sign-in method > Anonymous.
 3. Ative Firestore Database.
 4. Publique as regras iniciais de `firestore.rules` ou crie regras adequadas para producao antes de usar dados reais.
+5. Para usar Firebase SQL Connect, siga tambem o guia `SQL_FIREBASE_SETUP.md`.
 
 Para teste inicial, o sistema salva tudo no documento:
 
