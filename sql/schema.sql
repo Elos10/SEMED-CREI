@@ -72,6 +72,8 @@ create table if not exists assignments (
   teacher_id text not null references teachers(id) on delete cascade,
   student_id text not null references students(id) on delete cascade,
   unit_id text references units(id),
+  start_time time,
+  end_time time,
   active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
